@@ -1,17 +1,51 @@
 {
   "name": "idempotency-key-auditor",
-  "version": "0.0.0",
-  "description": "Find operations that can run twice without a safe idempotency boundary.",
+  "version": "0.1.0",
+  "description": "Audit operation contracts and captured local outcomes for missing idempotency key scope, expiry and payload binding, and for a key reused with a different body.",
   "type": "module",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test"
+    "lint": "node --check src/index.mjs && node --check src/text.mjs && node --check src/contract.mjs && node --check src/capture.mjs && node --check src/audit.mjs && node --check bin/idempotency-key-auditor.mjs && node --check test/support.mjs && node --check test/text.test.mjs && node --check test/contract.test.mjs && node --check test/capture.test.mjs && node --check test/audit.test.mjs && node --check test/limits.test.mjs && node --check test/confinement.test.mjs && node --check test/sanitisation.test.mjs && node --check test/ordering.test.mjs && node --check test/severity-table.test.mjs && node --check test/severity-behaviour.test.mjs && node --check test/incomplete.test.mjs && node --check test/cli.test.mjs && node --check test/guarantees.test.mjs && node --check test/examples.test.mjs",
+    "test": "node --test",
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=src/**",
+    "example": "node bin/idempotency-key-auditor.mjs --root examples/clean",
+    "pack:check": "npm pack --dry-run",
+    "check": "npm run lint && npm test && npm run example && npm run pack:check"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/edilec/idempotency-key-auditor"
-  }
+    "url": "git+https://github.com/edilec/idempotency-key-auditor.git"
+  },
+  "bin": {
+    "idempotency-key-auditor": "./bin/idempotency-key-auditor.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "examples",
+    "docs",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "idempotency",
+    "idempotency-key",
+    "api-contract",
+    "retry-safety",
+    "duplicate-request",
+    "audit",
+    "cli"
+  ],
+  "author": "Edilec Private Limited",
+  "bugs": {
+    "url": "https://github.com/edilec/idempotency-key-auditor/issues"
+  },
+  "homepage": "https://github.com/edilec/idempotency-key-auditor#readme"
 }

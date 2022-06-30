@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1",
+  "operations": [
+    {
+      "id": "create-payment",
+      "method": "POST",
+      "path": "/v1/payments",
+      "idempotency": {
+        "keySource": "header:Idempotency-Key",
+        "scope": "principal",
+        "expiresAfterSeconds": 86400,
+        "retryWindowSeconds": 3600,
+        "payloadBinding": "request-body-fingerprint",
+        "conflictStatus": 409
+      }
+    },
+    {
+      "id": "refund-payment",
+      "method": "POST",
+      "path": "/v1/refunds",
+      "idempotency": {
+        "keySource": "header:Idempotency-Key",
+        "scope": "global",
+        "expiresAfterSeconds": 604800,
+        "retryWindowSeconds": 3600,
+        "payloadBinding": "request-body-fingerprint",
+        "conflictStatus": 422
+      }
+    },
+    {
+      "id": "cancel-subscription",
+      "method": "DELETE",
+      "path": "/v1/subscriptions/{id}",
+      "idempotency": {
+        "keySource": "header:Idempotency-Key",
+        "scope": "principal",
+        "expiresAfterSeconds": 3600,
+        "retryWindowSeconds": 900,
+        "payloadBinding": "request-body-fingerprint",
+        "conflictStatus": 409
+      }
+    }
+  ]
+}

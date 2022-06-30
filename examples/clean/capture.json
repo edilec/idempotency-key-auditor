@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1",
+  "records": [
+    {
+      "id": "cap-001",
+      "operation": "create-payment",
+      "key": "idem-2f9c41ab",
+      "principal": "acct_northwind",
+      "requestFingerprint": "sha256:4f2a9c31b7d0e5a8",
+      "responseStatus": 201,
+      "responseFingerprint": "sha256:0b17d4e9c2a35f60",
+      "observedAt": "2026-03-01T09:00:00Z"
+    },
+    {
+      "id": "cap-002",
+      "operation": "create-payment",
+      "key": "idem-2f9c41ab",
+      "principal": "acct_northwind",
+      "requestFingerprint": "sha256:4f2a9c31b7d0e5a8",
+      "responseStatus": 201,
+      "responseFingerprint": "sha256:0b17d4e9c2a35f60",
+      "observedAt": "2026-03-01T09:00:12Z"
+    },
+    {
+      "id": "cap-003",
+      "operation": "create-payment",
+      "key": "idem-2f9c41ab",
+      "principal": "acct_tailspin",
+      "requestFingerprint": "sha256:91cc38a0be24d7f5",
+      "responseStatus": 201,
+      "responseFingerprint": "sha256:6e5b21d8af03c94a",
+      "observedAt": "2026-03-01T09:01:00Z"
+    },
+    {
+      "id": "cap-004",
+      "operation": "create-payment",
+      "key": "idem-2f9c41ab",
+      "principal": "acct_tailspin",
+      "requestFingerprint": "sha256:c70de1b3925a4f88",
+      "responseStatus": 409,
+      "responseFingerprint": "sha256:ab9034c7de125f61",
+      "observedAt": "2026-03-01T09:02:00Z"
+    },
+    {
+      "id": "cap-005",
+      "operation": "refund-payment",
+      "key": "idem-3c77b0e4",
+      "requestFingerprint": "sha256:2d80fa64c9e17b35",
+      "responseStatus": 201,
+      "responseFingerprint": "sha256:7c41e0b35da92f18",
+      "observedAt": "2026-03-01T10:00:00Z"
+    },
+    {
+      "id": "cap-006",
+      "operation": "refund-payment",
+      "key": "idem-3c77b0e4",
+      "requestFingerprint": "sha256:2d80fa64c9e17b35",
+      "responseStatus": 201,
+      "responseFingerprint": "sha256:7c41e0b35da92f18",
+      "observedAt": "2026-03-01T10:00:05Z"
+    },
+    {
+      "id": "cap-007",
+      "operation": "cancel-subscription",
+      "key": "idem-7b10da96",
+      "principal": "acct_northwind",
+      "requestFingerprint": "sha256:5a3f77c1024be8d9",
+      "responseStatus": 204,
+      "responseFingerprint": "sha256:e2049ba7c53d1f86",
+      "observedAt": "2026-03-02T08:00:00Z"
+    },
+    {
+      "id": "cap-008",
+      "operation": "cancel-subscription",
+      "key": "idem-7b10da96",
+      "principal": "acct_northwind",
+      "requestFingerprint": "sha256:5a3f77c1024be8d9",
+      "responseStatus": 204,
+      "responseFingerprint": "sha256:e2049ba7c53d1f86",
+      "observedAt": "2026-03-02T08:00:03Z"
+    }
+  ]
+}

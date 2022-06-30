@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1",
+  "records": [
+    {
+      "id": "cap-201",
+      "operation": "send-invite",
+      "key": "idem-5104ceab",
+      "principal": "acct_litware",
+      "requestFingerprint": "sha256:9c1e4470af62db38",
+      "responseStatus": 202,
+      "responseFingerprint": "sha256:20b8d5f61ac3e974",
+      "observedAt": "2026-03-05T08:00:00Z"
+    },
+    {
+      "id": "cap-202",
+      "operation": "send-invite",
+      "key": "idem-5104ceab",
+      "principal": "acct_litware",
+      "requestFingerprint": "sha256:9c1e4470af62db38",
+      "responseStatus": 202,
+      "responseFingerprint": "sha256:20b8d5f61ac3e974",
+      "observedAt": "2026-03-05T08:00:04Z"
+    },
+    {
+      "id": "cap-203",
+      "operation": "queue-export",
+      "key": "idem-ba7730f1",
+      "requestFingerprint": "sha256:41de08b2c95f7a63",
+      "responseStatus": 202,
+      "responseFingerprint": "sha256:e83b17cd0429a5f6",
+      "observedAt": "2026-03-05T09:00:00Z"
+    },
+    {
+      "id": "cap-204",
+      "operation": "queue-export",
+      "key": "idem-ba7730f1",
+      "requestFingerprint": "sha256:41de08b2c95f7a63",
+      "responseStatus": 202,
+      "observedAt": "2026-03-05T09:00:06Z"
+    },
+    {
+      "id": "cap-205",
+      "operation": "delete-account",
+      "key": "idem-cc4ab019",
+      "principal": "acct_litware",
+      "requestFingerprint": "sha256:7f26b0da3418ce59",
+      "responseStatus": 204,
+      "responseFingerprint": "sha256:0a94f7c2385bd61e",
+      "observedAt": "2026-03-05T10:00:00Z"
+    }
+  ]
+}

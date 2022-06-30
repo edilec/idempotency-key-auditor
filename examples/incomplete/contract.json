@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1",
+  "operations": [
+    {
+      "id": "send-invite",
+      "method": "POST",
+      "path": "/v1/invites",
+      "idempotency": {
+        "keySource": "header:Idempotency-Key",
+        "expiresAfterSeconds": 3600,
+        "retryWindowSeconds": 900,
+        "payloadBinding": "request-body-fingerprint",
+        "conflictStatus": 409
+      }
+    },
+    {
+      "id": "queue-export",
+      "method": "POST",
+      "path": "/v1/exports",
+      "idempotency": {
+        "keySource": "header:Idempotency-Key",
+        "scope": "global",
+        "expiresAfterSeconds": 86400,
+        "retryWindowSeconds": 900,
+        "payloadBinding": "request-body-fingerprint",
+        "conflictStatus": 409
+      }
+    }
+  ]
+}

@@ -547,6 +547,7 @@ export {
   SCOPES, UNSAFE_METHODS, compileContract,
 } from './contract.mjs'
 export {
-  EXCERPT_LIMIT, MAX_IDENTIFIER_LENGTH, byCodeUnit, decodeUtf8, excerpt,
-  hasForbiddenCharacter, isFingerprint, isIdentifier, isPlainObject, parseInstant,
+  EXCERPT_LIMIT, MAX_IDENTIFIER_LENGTH, byCodeUnit, decodeUtf8, describeValue,
+  excerpt, hasForbiddenCharacter, isFingerprint, isIdentifier, isPlainObject,
+  parseInstant,
 } from './text.mjs'

@@ -110,8 +110,12 @@ A **capture** records calls that were already observed:
 
 Bodies never appear. A capture carries **fingerprints**, so the auditor can tell
 "the same body" from "a different body" without ever holding a payload, a
-credential or a personal detail — and the fingerprint field only accepts a
-digest alphabet, so a capture cannot smuggle one in under that name.
+credential or a personal detail. The fingerprint field accepts a digest alphabet
+of 8–200 characters, so a body or a sentence of free text cannot arrive under
+that name — it is a shape check and not a secret filter, and whoever writes the
+capture is the one who decides the field holds a digest. A value this tool
+*refuses* is never reproduced: the finding describes its shape, its pointer says
+where it sits, and the value itself stays in the file it arrived in.
 
 `docs/idempotency-rules.md` carries the full schemas, the complete rule catalog
 with severities, the walk order and the limits. `examples/clean`,
@@ -215,6 +219,11 @@ completed outcomes can show.
   its own, U+009B is the 8-bit CSI), U+2028 and U+2029, and the bidi and isolate
   controls U+200E, U+200F, U+202A–U+202E and U+2066–U+2069. Each class is driven
   through four routes into the report, one of them an identifier.
+- **A refused value is described, never echoed.** Every field this tool rejects
+  — an identifier, a fingerprint, a status, an instant, a schema version — is
+  reported as its shape (`received a string of 49 character(s)`) and located by
+  its pointer. Reproducing it would put content the validation exists to refuse
+  onto stdout, which is piped and logged somewhere more public than the capture.
 - **Both inputs are confined by real path on both sides**, so a symbolic link
   planted inside the root is refused unread and a root that is itself reached
   through a link is not falsely refused.

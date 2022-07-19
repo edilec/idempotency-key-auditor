@@ -10,7 +10,7 @@
  * without ever holding a payload, a credential or a personal detail.
  */
 
-import { byCodeUnit, isFingerprint, isIdentifier, isPlainObject, parseInstant } from './text.mjs'
+import { byCodeUnit, describeValue, isFingerprint, isIdentifier, isPlainObject, parseInstant } from './text.mjs'
 
 export const CAPTURE_SCHEMA_VERSION = '1'
 
@@ -62,7 +62,7 @@ function compileRecord(sink, file, entry, index) {
       ruleId: 'identifier-invalid',
       pointer: `${pointer}/id`,
       message: `Record at index ${index} needs an "id" of 1-200 characters carrying no control, separator or bidi character.`,
-      evidence: `received ${JSON.stringify(entry.id)}`,
+      evidence: `received ${describeValue(entry.id)}`,
     })
     return null
   }
@@ -72,7 +72,7 @@ function compileRecord(sink, file, entry, index) {
       ruleId: 'identifier-invalid',
       pointer: `${pointer}/operation`,
       message: `Record "${entry.id}" needs an "operation" of 1-200 characters carrying no control, separator or bidi character.`,
-      evidence: `received ${JSON.stringify(entry.operation)}`,
+      evidence: `received ${describeValue(entry.operation)}`,
     })
     return null
   }
@@ -84,7 +84,7 @@ function compileRecord(sink, file, entry, index) {
         ruleId: 'identifier-invalid',
         pointer: `${pointer}/${field}`,
         message: `Record "${entry.id}" carries a "${field}" that is not a printable identifier of 1-200 characters; a value that prints differently from the value that was grouped cannot be audited.`,
-        evidence: `received ${JSON.stringify(entry[field])}`,
+        evidence: `received ${describeValue(entry[field])}`,
       })
       return null
     }
@@ -97,7 +97,7 @@ function compileRecord(sink, file, entry, index) {
         ruleId: 'record-invalid',
         pointer: `${pointer}/${field}`,
         message: `Record "${entry.id}" needs "${field}" to be a digest of 8-200 characters from A-Z a-z 0-9 : . _ + / = -, never a body.`,
-        evidence: `received ${JSON.stringify(entry[field])}`,
+        evidence: `received ${describeValue(entry[field])}`,
       })
       return null
     }
@@ -108,7 +108,7 @@ function compileRecord(sink, file, entry, index) {
       ruleId: 'record-invalid',
       pointer: `${pointer}/responseStatus`,
       message: `Record "${entry.id}" needs a "responseStatus" between 100 and 599.`,
-      evidence: `received ${JSON.stringify(entry.responseStatus)}`,
+      evidence: `received ${describeValue(entry.responseStatus)}`,
     })
     return null
   }
@@ -119,7 +119,7 @@ function compileRecord(sink, file, entry, index) {
       ruleId: 'timestamp-invalid',
       pointer: `${pointer}/observedAt`,
       message: `Record "${entry.id}" needs an "observedAt" ISO-8601 UTC instant such as 2026-03-01T09:00:00Z (${observedAt.reason}).`,
-      evidence: `received ${JSON.stringify(entry.observedAt)}`,
+      evidence: `received ${describeValue(entry.observedAt)}`,
     })
     return null
   }
@@ -158,7 +158,7 @@ export function compileCapture(sink, file, raw, limits) {
       ruleId: 'capture-invalid',
       pointer: '/schemaVersion',
       message: `The capture must declare schemaVersion "${CAPTURE_SCHEMA_VERSION}".`,
-      evidence: `received ${JSON.stringify(raw.schemaVersion)}`,
+      evidence: `received ${describeValue(raw.schemaVersion)}`,
     })
     return null
   }

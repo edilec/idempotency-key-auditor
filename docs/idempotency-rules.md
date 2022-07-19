@@ -123,8 +123,15 @@ rather than guessed at.
 | `observedAt` | yes | ISO-8601 UTC instant, `YYYY-MM-DDTHH:MM:SS[.mmm]Z` |
 
 A fingerprint is deliberately restricted to a digest alphabet so that a capture
-cannot carry a body, a credential or a personal detail into the report under the
-name of a digest. Nothing here is ever sent anywhere: the tool reads two files
+cannot carry a body or a sentence of free text into the report under the name of
+a digest. It is a shape check and not a secret filter — a value that already
+looks like a digest is accepted — so whoever writes the capture is the one who
+decides the field holds one.
+
+A value the tool *refuses* is never reproduced. The finding names its shape
+(`received a string of 49 character(s)`) and its pointer says exactly where in
+the file it sits; the value stays in the file it arrived in, rather than being
+copied onto stdout. Nothing here is ever sent anywhere: the tool reads two files
 and writes a report.
 
 Both fingerprints are optional because a capture may genuinely not have them —

@@ -7,7 +7,7 @@
  * it never issues a request.
  */
 
-import { byCodeUnit, isIdentifier, isPlainObject } from './text.mjs'
+import { byCodeUnit, describeValue, isIdentifier, isPlainObject } from './text.mjs'
 
 export const CONTRACT_SCHEMA_VERSION = '1'
 
@@ -93,7 +93,7 @@ function compileOperation(sink, file, entry, index) {
       ruleId: 'identifier-invalid',
       pointer: `${pointer}/id`,
       message: `Operation at index ${index} needs an "id" of 1-200 characters carrying no control, separator or bidi character.`,
-      evidence: `received ${JSON.stringify(entry.id)}`,
+      evidence: `received ${describeValue(entry.id)}`,
     })
     return null
   }
@@ -103,7 +103,7 @@ function compileOperation(sink, file, entry, index) {
       ruleId: 'operation-invalid',
       pointer: `${pointer}/method`,
       message: `Operation "${entry.id}" needs a "method" from ${METHODS.join(', ')}.`,
-      evidence: `received ${JSON.stringify(entry.method)}`,
+      evidence: `received ${describeValue(entry.method)}`,
     })
     return null
   }
@@ -169,7 +169,7 @@ function compileOperation(sink, file, entry, index) {
         ruleId: 'operation-invalid',
         pointer: `${blockPointer}/scope`,
         message: `Operation "${entry.id}" declares a "scope" outside ${SCOPES.join(', ')}.`,
-        evidence: `received ${JSON.stringify(block.scope)}`,
+        evidence: `received ${describeValue(block.scope)}`,
       })
       return null
     }
@@ -183,7 +183,7 @@ function compileOperation(sink, file, entry, index) {
         ruleId: 'operation-invalid',
         pointer: `${blockPointer}/${field}`,
         message: `Operation "${entry.id}" needs "${field}" to be an integer between 1 and ${MAX_SECONDS}.`,
-        evidence: `received ${JSON.stringify(block[field])}`,
+        evidence: `received ${describeValue(block[field])}`,
       })
       return null
     }
@@ -196,7 +196,7 @@ function compileOperation(sink, file, entry, index) {
         ruleId: 'operation-invalid',
         pointer: `${blockPointer}/payloadBinding`,
         message: `Operation "${entry.id}" declares a "payloadBinding" outside ${PAYLOAD_BINDINGS.join(', ')}.`,
-        evidence: `received ${JSON.stringify(block.payloadBinding)}`,
+        evidence: `received ${describeValue(block.payloadBinding)}`,
       })
       return null
     }
@@ -209,7 +209,7 @@ function compileOperation(sink, file, entry, index) {
         ruleId: 'operation-invalid',
         pointer: `${blockPointer}/conflictStatus`,
         message: `Operation "${entry.id}" needs "conflictStatus" to be an HTTP status between 100 and 599.`,
-        evidence: `received ${JSON.stringify(block.conflictStatus)}`,
+        evidence: `received ${describeValue(block.conflictStatus)}`,
       })
       return null
     }
@@ -342,7 +342,7 @@ export function compileContract(sink, file, raw, limits) {
       ruleId: 'contract-invalid',
       pointer: '/schemaVersion',
       message: `The contract must declare schemaVersion "${CONTRACT_SCHEMA_VERSION}".`,
-      evidence: `received ${JSON.stringify(raw.schemaVersion)}`,
+      evidence: `received ${describeValue(raw.schemaVersion)}`,
     })
     return null
   }

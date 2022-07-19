@@ -125,14 +125,44 @@ export function isIdentifier(value) {
 /**
  * A fingerprint stands in for a request or response body that this tool must
  * never see. The accepted shape is deliberately narrow -- printable ASCII from
- * a fixed set, 8 to 200 characters -- so that a capture cannot smuggle a
- * payload, a credential or a personal detail into the report under the name of
- * a digest.
+ * a fixed set, 8 to 200 characters -- so that a body, a sentence of free text
+ * or a personal detail cannot arrive in the report under the name of a digest.
+ *
+ * It is a shape check and not a secret filter: a value that already looks like
+ * a digest is accepted, and whoever writes the capture is the one who decides
+ * that the field holds one. What the alphabet *does* guarantee is that a
+ * refused value is refused -- and a refused value is never reproduced, which
+ * is what `describeValue` below is for.
  */
 const FINGERPRINT = /^[A-Za-z0-9][A-Za-z0-9:._+/=-]{7,199}$/
 
 export function isFingerprint(value) {
   return typeof value === 'string' && FINGERPRINT.test(value)
+}
+
+/**
+ * Say what a refused value was, without reproducing any of it.
+ *
+ * A rejected field is arbitrary content from a file this tool did not write,
+ * and the report goes to stdout -- a stream that is piped, logged and pasted
+ * somewhere more public than the capture ever was. Echoing the value back
+ * ("received \"4111111111111111\"") hands that content a wider audience than
+ * it had, and it does so on exactly the fields whose validation exists to keep
+ * a payload, a credential or a personal detail out of the report.
+ *
+ * The pointer on the finding already names the exact position in the file, so
+ * the shape is all a reader needs from the report itself; the value is in the
+ * file, where it started.
+ */
+export function describeValue(value) {
+  if (value === undefined) return 'nothing'
+  if (value === null) return 'null'
+  if (typeof value === 'boolean') return value ? 'true' : 'false'
+  if (typeof value === 'number') return Number.isInteger(value) ? 'an integer' : 'a number'
+  if (typeof value === 'string') return `a string of ${value.length} character(s)`
+  if (Array.isArray(value)) return `an array of ${value.length} item(s)`
+  if (typeof value === 'object') return 'an object'
+  return `a ${typeof value}`
 }
 
 /**

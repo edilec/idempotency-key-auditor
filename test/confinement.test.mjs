@@ -130,6 +130,46 @@ test('an entry that exists but resolves nowhere is refused unresolved', async ()
   assert.equal(report.status, 'incomplete')
 })
 
+test('a missing file under a symlinked directory is refused for leaving the root', async () => {
+  // The entry does not exist, so there is no real path to confine -- and the
+  // question is still which tree the run would have read it from. A symlinked
+  // parent directory is not allowed to answer that: this is `path-escapes-root`
+  // and not "the file is not there", because the second diagnostic would invite
+  // the reader to create the file, out of tree, and re-run.
+  const report = await withBase(async (base) => {
+    const root = join(base, 'inputs')
+    const outside = join(base, 'outside')
+    await mkdir(root)
+    await mkdir(outside)
+    await writeJson(join(root, 'contract.json'), contractOf([operation()]))
+    await symlink(outside, join(root, 'linkdir'))
+    return auditIdempotency({ root, capture: 'linkdir/nope.json' })
+  })
+
+  assert.equal(findingsFor(report, 'path-escapes-root').length, 1)
+  assert.equal(findingsFor(report, 'input-unreadable').length, 0, 'the refusal is about the tree, not about the file being absent')
+  assert.equal(findingsFor(report, 'path-escapes-root')[0].location.file, 'linkdir/nope.json')
+  assert.equal(report.status, 'incomplete')
+})
+
+test('a missing file under a real directory inside the root is absent, not an escape', async () => {
+  // The other direction of the same guard. Confining the nearest existing
+  // ancestor must not turn every absent file into a confinement failure, which
+  // would be a false refusal dressed up as a security finding.
+  const report = await withBase(async (base) => {
+    const root = join(base, 'inputs')
+    await mkdir(root)
+    await mkdir(join(root, 'nested'))
+    await writeJson(join(root, 'contract.json'), contractOf([operation()]))
+    return auditIdempotency({ root, capture: 'nested/nope.json' })
+  })
+
+  assert.equal(findingsFor(report, 'input-unreadable').length, 1)
+  assert.equal(findingsFor(report, 'path-escapes-root').length, 0)
+  assert.match(findingsFor(report, 'input-unreadable')[0].message, /ENOENT/)
+  assert.equal(report.status, 'incomplete')
+})
+
 test('a directory where a file was named is reported, not read', async () => {
   const report = await withBase(async (base) => {
     await writeJson(join(base, 'contract.json'), contractOf([operation()]))

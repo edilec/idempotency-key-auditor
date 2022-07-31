@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict'
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import test from 'node:test'
 
 import { DEFAULT_LIMITS, HARD_LIMITS, validateLimits } from '../src/index.mjs'
-import { apiReport, captureOf, cliReport, contractOf, findingsFor, fixture, operation, raisedRules, record } from './support.mjs'
+import { apiReport, captureOf, cliReport, cliRun, contractOf, findingsFor, fixture, operation, projectDirectory, raisedRules, record } from './support.mjs'
 
 /**
  * Every documented limit, enforced and reported by name.
@@ -22,6 +24,63 @@ test('every default limit has a hard cap, and the two agree in both directions',
     assert.equal(Number.isInteger(value) && value >= 1, true, `${key} must be a positive integer`)
     assert.equal(value <= HARD_LIMITS[key], true, `${key} must not default above its own cap`)
   }
+})
+
+test('the defaults and the hard caps are these exact numbers', () => {
+  // Written out rather than derived. "a positive integer below its own cap" is
+  // satisfied by any number at all, so it holds none of these: dropping
+  // maxOperations from 500 to 3 passes that check while silently refusing every
+  // contract with four operations in it.
+  assert.deepEqual({ ...DEFAULT_LIMITS }, {
+    maxFileBytes: 5242880,
+    maxOperations: 500,
+    maxRecords: 20000,
+    maxRecordsPerKey: 500,
+    maxFindings: 1000,
+  })
+  assert.deepEqual({ ...HARD_LIMITS }, {
+    maxFileBytes: 67108864,
+    maxOperations: 5000,
+    maxRecords: 500000,
+    maxRecordsPerKey: 50000,
+    maxFindings: 20000,
+  })
+})
+
+test('the documented defaults are the ones the help text and the rule document print', async () => {
+  const help = await cliRun(['--help'])
+  const docs = await readFile(join(projectDirectory, 'docs/idempotency-rules.md'), 'utf8')
+
+  assert.equal(help.code, 0)
+  for (const [flag, name, value, cap] of [
+    ['--max-file-bytes', 'maxFileBytes', 5242880, 67108864],
+    ['--max-operations', 'maxOperations', 500, 5000],
+    ['--max-records', 'maxRecords', 20000, 500000],
+    ['--max-records-per-key', 'maxRecordsPerKey', 500, 50000],
+    ['--max-findings', 'maxFindings', 1000, 20000],
+  ]) {
+    assert.equal(help.stdout.includes(`${flag} `), true, `${flag} must appear in the help text`)
+    assert.equal(help.stdout.includes(`(default ${value})`), true, `the help text must state the default ${value}`)
+    assert.equal(docs.includes(`| \`${name}\` | ${value} | ${cap} | \`${flag}\` |`), true, `the rule document row for ${name}`)
+  }
+})
+
+test('a contract well inside the default maxOperations compiles every operation', async () => {
+  // The one default no other fixture crosses, driven end to end. A lowered
+  // default turns this contract into `too-many-operations` and compiles none of
+  // it, which is the silent truncation the limits exist to prevent.
+  const ids = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+  const operations = ids.map((id) => operation({ id, path: `/v1/${id}` }))
+  const records = ids.flatMap((id) => [
+    record({ id: `${id}-1`, operation: id, key: `idem-${id}0000000` }),
+    record({ id: `${id}-2`, operation: id, key: `idem-${id}0000000`, observedAt: '2026-03-01T09:00:05Z' }),
+  ])
+  const report = await apiReport(fixture(operations, records))
+
+  assert.deepEqual(report.findings, [], 'nothing was refused and nothing went unexercised')
+  assert.equal(report.status, 'pass')
+  assert.equal(report.summary.operations, 8)
+  assert.equal(report.summary.checked, 16)
 })
 
 test('an unknown limit is refused, never ignored', () => {

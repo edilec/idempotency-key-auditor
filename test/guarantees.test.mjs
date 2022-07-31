@@ -41,6 +41,29 @@ test('the shipped source opens no network connection of any kind', async () => {
   }
 })
 
+test('the shipped source starts no process and runs no code it did not parse', async () => {
+  // The README says this tool reads two files and writes a report. A process
+  // launcher or a dynamic evaluator makes that sentence unprovable: neither has
+  // a behavioural signature until the day it misbehaves, which is exactly the
+  // kind of capability a scan is good for.
+  const source = await shippedSource()
+  for (const name of [
+    'node:child_process', 'node:worker_threads', 'node:cluster', 'node:vm',
+    'node:repl', 'node:inspector', 'execFile', 'execSync', 'spawnSync',
+    'process.binding',
+  ]) {
+    assert.equal(source.includes(name), false, `the source reaches for ${name}`)
+  }
+  assert.equal(/\bnew\s+Function\b/.test(source), false, 'the Function constructor is eval under another name')
+  assert.equal(/\beval\s*\(/.test(source), false)
+  assert.equal(/\bimport\s*\(/.test(source), false, 'a dynamic import decides at run time which code runs')
+  // `process.exitCode` hands the code to the runtime, which flushes stdout
+  // before the process leaves. `process.exit()` does not wait, and a large JSON
+  // report on a pipe is precisely what it truncates.
+  assert.equal(/\bprocess\.exit\s*\(/.test(source), false, 'process.exit can truncate the report on stdout')
+  assert.equal(source.includes('process.exitCode = '), true, 'the exit code is handed over, not taken')
+})
+
 test('the shipped source reads no clock, no random source and no environment', async () => {
   const source = await shippedSource()
   assert.equal(/\bnew\s+Date\b/.test(source), false, 'a wall clock in the output breaks byte-identical runs')

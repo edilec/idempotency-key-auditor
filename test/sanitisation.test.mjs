@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { formatReport, hasForbiddenCharacter } from '../src/index.mjs'
-import { FORBIDDEN, apiReport, captureOf, cliRun, contractOf, fixture, operation, record, withRoot } from './support.mjs'
+import { createFinding, formatReport, hasForbiddenCharacter } from '../src/index.mjs'
+import { FORBIDDEN, apiReport, captureOf, cliRun, contractOf, findingsFor, fixture, operation, record, withRoot } from './support.mjs'
 
 /**
  * Sanitisation, tested by class and by route.
@@ -135,5 +135,62 @@ test('a file name is checked as configuration before it can reach the report', a
     assert.equal(result.code, 2)
     assert.equal(result.stdout, '', 'a configuration error never had a subject')
     assert.match(result.stderr, /must not contain a control, separator or bidi character/)
+  })
+})
+
+/**
+ * The sanitisation each finding field gets, asserted where it is applied.
+ *
+ * Three of these five calls cannot be reached with untrusted content through
+ * the command line today -- a file name is checked as configuration before it
+ * can reach a finding, and a suggestion interpolates nothing longer than a
+ * `keySource`. That is a fact about today's callers and not a property of the
+ * report, so they are asserted against `createFinding` itself, which is the
+ * place the README's claim is actually made: *every* untrusted string, not the
+ * one field a developer remembered.
+ */
+test('createFinding bounds and flattens every field it is given, not only the evidence', () => {
+  const lf = FORBIDDEN['C0 LF']
+  const finding = createFinding({
+    ruleId: 'key-absent',
+    file: `a${lf}${'f'.repeat(300)}`,
+    pointer: `/${lf}${'p'.repeat(300)}`,
+    message: `m${lf}${'m'.repeat(500)}`,
+    suggestion: `s${lf}${'s'.repeat(400)}`,
+    evidence: `e${lf}${'e'.repeat(300)}`,
+  })
+
+  assert.equal(finding.location.file.length, 203, 'a file is bounded to 200 characters plus the ellipsis')
+  assert.equal(finding.location.file.startsWith('a f'), true, 'and flattened to one line')
+  assert.equal(finding.location.pointer.length, 203, 'a pointer is bounded to 200 characters plus the ellipsis')
+  assert.equal(finding.message.length, 403, 'a message is bounded to 400 characters plus the ellipsis')
+  assert.equal(finding.message.startsWith('m m'), true)
+  assert.equal(finding.suggestion.length, 303, 'a suggestion is bounded to 300 characters plus the ellipsis')
+  assert.equal(finding.suggestion.startsWith('s s'), true)
+  assert.equal(finding.evidence.length, 163, 'evidence is bounded to 160 characters plus the ellipsis')
+  assert.equal(finding.evidence.startsWith('e e'), true)
+
+  for (const value of [finding.location.file, finding.location.pointer, finding.message, finding.suggestion, finding.evidence]) {
+    assert.equal(hasForbiddenCharacter(value), false)
+    assert.equal(value.includes(lf), false)
+  }
+})
+
+test('an input name is bounded to 1-200 characters, on both sides of the bound', async () => {
+  await withRoot({ 'contract.json': contractOf([operation()]), 'capture.json': captureOf(pair) }, async (root) => {
+    for (const name of ['', 'x'.repeat(201)]) {
+      const refused = await cliRun(['--root', root, '--capture', name])
+      assert.equal(refused.code, 2)
+      assert.equal(refused.stdout, '', 'a configuration error never had a subject')
+      assert.match(refused.stderr, /--capture must be a relative file name of 1-200 characters/)
+    }
+
+    // The other side of the bound: 200 characters is a legal name, and a run
+    // that refused it would be refusing legitimate input.
+    const accepted = await cliRun(['--root', root, '--capture', 'y'.repeat(200), '--json'])
+    assert.equal(accepted.code, 2)
+    assert.notEqual(accepted.stdout, '', 'the run had a subject: a named file that is not there')
+    const report = JSON.parse(accepted.stdout)
+    assert.equal(findingsFor(report, 'input-unreadable')[0].location.file, 'y'.repeat(200), 'the name reaches the report whole')
   })
 })

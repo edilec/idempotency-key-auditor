@@ -19,8 +19,9 @@ All notable changes to this project are documented in this file.
   binding that is either undeclared or explicitly `none`;
 - a capture of outcomes that were already observed locally, carrying request
   and response **fingerprints** rather than bodies, with the fingerprint field
-  restricted to a digest alphabet so a capture cannot smuggle a payload, a
-  credential or a personal detail into the report under that name;
+  restricted to a digest alphabet of 8-200 characters so a body or a sentence
+  of free text cannot arrive in the report under that name -- a shape check and
+  not a secret filter, which is what the documents now say;
 - key entries formed from the declared scope — `(operation, key)` globally,
   `(operation, principal, key)` per principal — walked in observation order
   with the record id as the tie-break, and anchored on the first call, which
@@ -76,6 +77,16 @@ All notable changes to this project are documented in this file.
 - the rule catalog, both schemas, the walk order, the ordering rule, the limits,
   the exit codes and the list of things this tool cannot conclude in
   `docs/idempotency-rules.md`.
+
+### Fixed
+
+- a value this tool refuses is no longer reproduced. Every validation failure
+  echoed the rejected value back into the finding's evidence, so a card number,
+  a JWT or an access key id planted in a `requestFingerprint`, an `observedAt`
+  or a `responseStatus` reached stdout verbatim -- on the very fields whose
+  validation exists to keep such content out of the report. A refusal now names
+  the shape of the value and leaves its content in the file it arrived in; the
+  pointer already says exactly where that is.
 
 ### Guaranteed
 

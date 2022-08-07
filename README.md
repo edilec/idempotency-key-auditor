@@ -198,9 +198,12 @@ completed outcomes can show.
   table**, and an unknown rule id throws. The table is asserted against the
   documented catalog in both directions — and because a table, a catalog and a
   test's expected map are three declarations that a coordinated edit satisfies,
-  every rule whose severity decides a verdict is *also* pinned by running the
-  real binary over a real input and asserting the status and the process exit
-  code.
+  every error rule is *also* pinned by running the real binary over a real
+  input. Where severity alone decides the verdict, the status and the process
+  exit code are the assertion; where the rule marks the run incomplete and the
+  exit code is 2 either way, the number of errors in the summary and the
+  severity word printed in the human report are, written out inline in a file
+  that imports no table and shares no expectation with anything else.
 - **`pass` is never reported on evidence that was not obtained.** Every input
   that could not be read, decoded, parsed or bounded, every record that could
   not be placed, and every comparison that lacked a fingerprint makes the run

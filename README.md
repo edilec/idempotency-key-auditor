@@ -227,6 +227,10 @@ completed outcomes can show.
   reported as its shape (`received a string of 49 character(s)`) and located by
   its pointer. Reproducing it would put content the validation exists to refuse
   onto stdout, which is piped and logged somewhere more public than the capture.
+  A file that will not *parse* is covered by the same rule: `input-not-json`
+  names the offset — position, line and column — and never the text, because
+  V8's own parse message quotes the first ten characters of the document back,
+  or the whole document when it is shorter than that.
 - **Both inputs are confined by real path on both sides**, so a symbolic link
   planted inside the root is refused unread and a root that is itself reached
   through a link is not falsely refused.

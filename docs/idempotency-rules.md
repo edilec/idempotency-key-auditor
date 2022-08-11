@@ -134,6 +134,18 @@ the file it sits; the value stays in the file it arrived in, rather than being
 copied onto stdout. Nothing here is ever sent anywhere: the tool reads two files
 and writes a report.
 
+A file the tool cannot *parse* is not reproduced either, and that took a fix.
+`input-not-json` names the offset the parse failed at — position, line and
+column — and never the text it failed on. V8 reports a parse failure two ways
+and one of them quotes the input back, `Unexpected token 'A',
+"AKIAIOSFODNN7EXAMPLE" is not valid JSON`, which reproduces the first ten
+characters of the file, or the whole file when it is shorter than that. A
+capture short enough to be nothing but a credential was therefore published in
+full by its own error message, on the one path an unparseable file is guaranteed
+to take, and neither sanitising nor truncating touched it: the snippet sits at
+the front of the message and `excerpt` cuts from the end. The quoted half is now
+dropped before the finding is built.
+
 Both fingerprints are optional because a capture may genuinely not have them —
 and where one is missing and a comparison needed it, that is reported as missing
 evidence and the run is `incomplete`. It is never treated as agreement.

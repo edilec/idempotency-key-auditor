@@ -19,7 +19,9 @@ import { dirname, isAbsolute, normalize, resolve, sep } from 'node:path'
 import { auditOutcomes } from './audit.mjs'
 import { compileCapture } from './capture.mjs'
 import { compileContract } from './contract.mjs'
-import { byCodeUnit, decodeUtf8, excerpt, hasForbiddenCharacter, isPlainObject } from './text.mjs'
+import {
+  byCodeUnit, decodeUtf8, excerpt, hasForbiddenCharacter, isPlainObject, parseFailureDetail,
+} from './text.mjs'
 
 export const TOOL_ID = 'idempotency-key-auditor'
 export const REPORT_SCHEMA_VERSION = '1'
@@ -357,7 +359,7 @@ async function loadJson(sink, file, real, limits) {
     sink.add({
       file,
       ruleId: 'input-not-json',
-      message: `${file} is not valid JSON: ${error.message}`,
+      message: `${file} is not valid JSON: ${parseFailureDetail(error)}.`,
       suggestion: 'Validate the file with a JSON parser before re-running.',
     })
     return null
@@ -549,5 +551,5 @@ export {
 export {
   EXCERPT_LIMIT, MAX_IDENTIFIER_LENGTH, byCodeUnit, decodeUtf8, describeValue,
   excerpt, hasForbiddenCharacter, isFingerprint, isIdentifier, isPlainObject,
-  parseInstant,
+  parseFailureDetail, parseInstant,
 } from './text.mjs'

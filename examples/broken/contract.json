@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1",
+  "operations": [
+    {
+      "id": "charge-card",
+      "method": "POST",
+      "path": "/v1/charges"
+    },
+    {
+      "id": "issue-refund",
+      "method": "POST",
+      "path": "/v1/refunds",
+      "idempotency": {
+        "keySource": "header:Idempotency-Key",
+        "scope": "global",
+        "payloadBinding": "none"
+      }
+    },
+    {
+      "id": "update-address",
+      "method": "PATCH",
+      "path": "/v1/customers/{id}/address",
+      "idempotency": {
+        "keySource": "header:Idempotency-Key",
+        "scope": "principal",
+        "expiresAfterSeconds": 300,
+        "retryWindowSeconds": 900,
+        "payloadBinding": "request-body-fingerprint",
+        "conflictStatus": 409
+      }
+    }
+  ]
+}

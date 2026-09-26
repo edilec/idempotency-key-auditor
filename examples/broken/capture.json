@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1",
+  "records": [
+    {
+      "id": "cap-101",
+      "operation": "charge-card",
+      "principal": "acct_contoso",
+      "requestFingerprint": "sha256:1188ffa3c40b7e25",
+      "responseStatus": 201,
+      "responseFingerprint": "sha256:bd3f04a91c7e2680",
+      "observedAt": "2026-03-04T11:00:00Z"
+    },
+    {
+      "id": "cap-102",
+      "operation": "issue-refund",
+      "key": "idem-88b1c0da",
+      "requestFingerprint": "sha256:a01f3c9d47be2058",
+      "responseStatus": 201,
+      "responseFingerprint": "sha256:4429ce8107bfa365",
+      "observedAt": "2026-03-04T11:00:00Z"
+    },
+    {
+      "id": "cap-103",
+      "operation": "issue-refund",
+      "key": "idem-88b1c0da",
+      "requestFingerprint": "sha256:f5b7203ce8a14d69",
+      "responseStatus": 201,
+      "responseFingerprint": "sha256:4429ce8107bfa365",
+      "observedAt": "2026-03-04T11:00:30Z"
+    },
+    {
+      "id": "cap-104",
+      "operation": "issue-refund",
+      "key": "idem-88b1c0da",
+      "requestFingerprint": "sha256:a01f3c9d47be2058",
+      "responseStatus": 201,
+      "responseFingerprint": "sha256:9d6a15f38c0be742",
+      "observedAt": "2026-03-04T11:01:00Z"
+    },
+    {
+      "id": "cap-105",
+      "operation": "update-address",
+      "key": "idem-12efb705",
+      "principal": "acct_fabrikam",
+      "requestFingerprint": "sha256:3ea6c58d10429fb7",
+      "responseStatus": 200,
+      "responseFingerprint": "sha256:76c2049be3d18af5",
+      "observedAt": "2026-03-04T12:00:00Z"
+    },
+    {
+      "id": "cap-106",
+      "operation": "update-address",
+      "key": "idem-12efb705",
+      "principal": "acct_fabrikam",
+      "requestFingerprint": "sha256:8b40df2159ea7c63",
+      "responseStatus": 200,
+      "responseFingerprint": "sha256:c19e73a5b0248fd6",
+      "observedAt": "2026-03-04T12:00:10Z"
+    },
+    {
+      "id": "cap-107",
+      "operation": "update-address",
+      "key": "idem-12efb705",
+      "principal": "acct_fabrikam",
+      "requestFingerprint": "sha256:3ea6c58d10429fb7",
+      "responseStatus": 200,
+      "responseFingerprint": "sha256:76c2049be3d18af5",
+      "observedAt": "2026-03-04T12:10:00Z"
+    },
+    {
+      "id": "cap-108",
+      "operation": "update-address",
+      "principal": "acct_fabrikam",
+      "requestFingerprint": "sha256:d70b9145ac3e8206",
+      "responseStatus": 200,
+      "responseFingerprint": "sha256:5f8c31e07ab24d99",
+      "observedAt": "2026-03-04T12:20:00Z"
+    }
+  ]
+}

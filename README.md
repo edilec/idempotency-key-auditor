@@ -16,8 +16,10 @@ calls that already happened, and reports where the two disagree.
 ## Install
 
 ```sh
-npm install idempotency-key-auditor
+npm install github:edilec/idempotency-key-auditor
 ```
+
+This installs the public GitHub source; `idempotency-key-auditor` is not published to npm.
 
 Or run it from a checkout with no install step at all — the package has no
 runtime and no development dependencies.
@@ -25,8 +27,8 @@ runtime and no development dependencies.
 ## Use
 
 ```sh
-idempotency-key-auditor --root examples/clean
-idempotency-key-auditor --root examples/broken --json | jq '.findings[].ruleId'
+npx idempotency-key-auditor --root examples/clean
+npx idempotency-key-auditor --root examples/broken --json | jq '.findings[].ruleId'
 ```
 
 The JSON report goes to stdout and nothing else does, so stdout pipes straight

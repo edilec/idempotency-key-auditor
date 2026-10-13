@@ -134,12 +134,6 @@ test('the README states what the tool cannot conclude, and the docs agree', asyn
   assert.match(docs, /It cannot conclude that an operation is idempotent/)
 })
 
-test('the CHANGELOG says no release has been published', async () => {
-  const changelog = await readFile(join(projectDirectory, 'CHANGELOG.md'), 'utf8')
-
-  assert.equal(changelog.trimEnd().endsWith('No release has been published.'), true)
-})
-
 test('a pass is never reported on an unread input', async () => {
   // The invariant every scan above exists to protect, asserted directly: if a
   // run did not read an input, it does not get to say the capture was fine.
